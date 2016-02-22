@@ -1,10 +1,43 @@
 package command;
 
+import client.CalculateCallback;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
 
 public class CalculatePi implements Command, Serializable {
     private static final long serialVersionUID = 2478264756614L;
-    private int digits;
+
+    /**
+     * constants used in pi computation
+     */
+    private static final BigDecimal FOUR = BigDecimal.valueOf(4);
+
+    /**
+     * rounding mode to use during pi computation
+     */
+    private static final int roundingMode = BigDecimal.ROUND_HALF_EVEN;
+
+    /**
+     * digits of precision after the decimal point
+     */
+    private final int digits;
+
+    /**
+     * result of calculating Pi
+     */
+    private BigDecimal result;
+
+    /**
+     * object to call back when done with calculating Pi
+     */
+    private CalculateCallback callback;
+
+    public CalculatePi(int digits, CalculateCallback callback) {
+        this.digits = digits;
+        this.callback = callback;
+    }
 
     @Override
     public void execute() {
@@ -13,10 +46,42 @@ public class CalculatePi implements Command, Serializable {
     }
 
     public void calculate() {
-        System.out.println("Calculating");
+        int scale = digits + 5;
+        BigDecimal arctan1_5 = arctan(5, scale);
+        BigDecimal arctan1_239 = arctan(239, scale);
+        BigDecimal pi = arctan1_5.multiply(FOUR).subtract(arctan1_239).multiply(FOUR);
+        result = pi.setScale(digits, BigDecimal.ROUND_HALF_UP);
+    }
+
+    public BigDecimal arctan(int inverseX, int scale) {
+        BigDecimal result, numer, term;
+        BigDecimal invX = BigDecimal.valueOf(inverseX);
+        BigDecimal invX2 = BigDecimal.valueOf(inverseX * inverseX);
+
+        numer = BigDecimal.ONE.divide(invX, scale, roundingMode);
+
+        result = numer;
+        int i = 1;
+        do {
+            numer = numer.divide(invX2, scale, roundingMode);
+            int denom = 2 * i + 1;
+            term = numer.divide(BigDecimal.valueOf(denom), scale, roundingMode);
+            if ((i % 2) != 0) {
+                result = result.subtract(term);
+            } else {
+                result = result.add(term);
+            }
+            i++;
+        } while (term.compareTo(BigDecimal.ZERO) != 0);
+        return result;
     }
 
     public void returnResult() {
-        System.out.println("Returning Result");
+        try {
+            callback.receiveResult(result);
+        } catch (RemoteException e) {
+            System.out.println("Something went wrong");
+            e.printStackTrace();
+        }
     }
 }

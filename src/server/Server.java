@@ -23,9 +23,11 @@ public class Server {
 
             System.out.println("Service has been successfully bound. Enter \"exit\" to close server.");
         } catch (RemoteException e) {
+            System.out.println("Something went wrong");
             e.printStackTrace();
             System.exit(1);
         } catch (Exception e) {
+            System.out.println("Something went wrong");
             e.printStackTrace();
             System.exit(1);
         }
