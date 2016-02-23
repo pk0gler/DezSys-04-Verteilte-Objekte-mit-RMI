@@ -1,12 +1,21 @@
-package client;
+package callback;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * CalculatePiCallback is the implementation of the CalculateCallback interface.
+ *
+ * @author Alexandru Jaravete
+ */
 public class CalculatePiCallback implements CalculateCallback {
-    boolean isStub;
+    private boolean isStub;
 
+    /**
+     * The Constructor automatically sets isStub to false because
+     * normally an instance of this class is not a stub.
+     */
     public CalculatePiCallback() {
         isStub = false;
     }
