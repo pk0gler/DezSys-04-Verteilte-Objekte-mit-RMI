@@ -8,6 +8,8 @@ import java.rmi.RemoteException;
 
 /**
  * This command calculates Pi up to a certain decimal.
+ * Most of the code for this class is from the Oracle Tutorial for RMI:
+ * https://docs.oracle.com/javase/tutorial/rmi
  *
  * @author Alexandru Jaravete
  */
@@ -66,6 +68,7 @@ public class CalculatePi implements Command, Serializable {
      */
     public void calculate() {
         //The calculation is from the Java RMI Tutorial from Oracle
+        //https://docs.oracle.com/javase/tutorial/rmi
         int scale = digits + 5;
         BigDecimal arctan1_5 = arctan(5, scale);
         BigDecimal arctan1_239 = arctan(239, scale);
@@ -88,6 +91,7 @@ public class CalculatePi implements Command, Serializable {
      */
     public BigDecimal arctan(int inverseX, int scale) {
         //The calculation is from the Java RMI Tutorial from Oracle
+        //https://docs.oracle.com/javase/tutorial/rmi
         BigDecimal result, numer, term;
         BigDecimal invX = BigDecimal.valueOf(inverseX);
         BigDecimal invX2 = BigDecimal.valueOf(inverseX * inverseX);
